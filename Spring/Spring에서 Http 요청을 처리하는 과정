@@ -23,9 +23,9 @@ Dispatcher 는 사전적으로 배차, 처리, 발송 등의 뜻을 가진 단�
 요청이 들어오면 Dispaocher Servlet 은 RequestMappingHandlerMapping 을 통해 어떤 핸들러(컨트롤러 메서드)가 해당 요청을 처리할 지 찾아낸다.
 요청을 처리할 수 있는 핸들러가 있다면 해당 핸들러에 대한 Handler Adapter를 찾아 처리를 수행한다.
 Handler Adapter는 인터페이스로 되어 있으며, 그 구현체 중 하나인 AbstractHandlerMethodAdapter 는 추상 클래스로
-이를 확장한 클래스인 RequestMappingHandlerAdapter 의 invoikeHandlerMethod 가 바로 우리가 작성한 핸들러 메서드들을 호출하게 된다.
-조금 헷갈릴 수 있는 부분을 짚고 넘어가자
-RequestMappingHandlerMapping 은 요청 URL과 핸들러 메서드를 매핑하는 역할을 하고, 
+이를 확장한 클래스인 RequestMappingHandlerAdapter 내부의 invoikeHandlerMethod 가 바로 우리가 작성한 핸들러 메서드들을 호출하게 된다.
+조금 헷갈릴 수 있는 부분을 짚고 넘어가자.
+RequestMappingHandlerMapping 은 요청 URL과 핸들러 메서드(컨트롤러 메서드)를 매핑하는 역할을 하고, 
 RequestMappingHandlerAdapter 는 해당 핸들러 메서드를 호출하고 실행 전후 처리를 담당한다.
 
 그렇다면
