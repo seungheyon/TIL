@@ -1,0 +1,41 @@
+
+Spring이 Http 요청을 받아서 처리하는 과정을 정리해 보자. 
+
+
+특정 요청을 받아 처리하는 것을 Handler 라고 한다. 
+스프링에서는 어떤 Handler 가 있는지, Handler가 요청을 어떻게 처리하는지 알아보자.
+
+
+
+Spring 은 Servlet api 기반의 프레임워크이며, spring-webmvc 모듈로써 서블릿 스택의 웹 어플리케이션 개발 환경을 제공한다. spring-webmvc 모듈 기반으로 서블릿 스택을 사용하는 프레임워크의 정식 명칭은 Spring Web MVC 이다.
+Spring 5.0 부터는 Spring Web MVC 와 병행하여 Spring WebFlux 라는 반응형 스택의 웹 프레임워크를 도입했으며, 이에 대한 정리는 다음에 진행하려고 한다.
+
+
+
+servlet이라 함은 네트워크 요청을 처리하기 위한 클래스로 이름에 servlet 이 붙어있으면 네트워크 요청을 처리하기 위한 클래스라고 생각할 수 있다.
+servlet은 servlet Container 에 의해 관리되며 대표적인 servletContainer로는 Tomcat 이 있다.
+그렇다면 Dispatcher Servlet 은 무엇일까? 
+Dispatcher 는 사전적으로 배차, 처리, 발송 등의 뜻을 가진 단어로 Dispaocher Servlet은 요청을 배차시키는,
+즉 네트워크 요청을 받아들여 필요한 곳으로 분류시키는 역할을 하는 클래스 라고 볼 수 있다.
+스프링의 웹 모듈에는 모든 Http 요청의 진입점이 되는 Dispaocher Servlet 클래스가 있으며, 
+이 Dispaocher Servlet이 브라우저로부터 온 요청을 가로채서 적절한 핸들러를 찾아 요청에 대한 처리를 위임한다.
+
+요청이 들어오면 Dispaocher Servlet 은 RequestMappingHandlerMapping 을 통해 어떤 핸들러(컨트롤러 메서드)가 해당 요청을 처리할 지 찾아낸다.
+요청을 처리할 수 있는 핸들러가 있다면 해당 핸들러에 대한 Handler Adapter를 찾아 처리를 수행한다.
+Handler Adapter는 인터페이스로 되어 있으며, 그 구현체 중 하나인 AbstractHandlerMethodAdapter 는 추상 클래스로
+이를 확장한 클래스인 RequestMappingHandlerAdapter 의 invoikeHandlerMethod 가 바로 우리가 작성한 핸들러 메서드들을 호출하게 된다.
+조금 헷갈릴 수 있는 부분을 짚고 넘어가자
+RequestMappingHandlerMapping 은 요청 URL과 핸들러 메서드를 매핑하는 역할을 하고, 
+RequestMappingHandlerAdapter 는 해당 핸들러 메서드를 호출하고 실행 전후 처리를 담당한다.
+
+그렇다면
+컨트롤러의 핸들러 함수가 실행되고 그 반환값에 대한 처리는 어떤 과정으로 이루어질까?
+Dto 객체가 어떻게 Json 형태의 응답으로 변환되어서 클라이언트로 전달되는 걸까?
+
+요청을 처리하는 과정을 좀 더 자세히 들여다보면, invoikeHandlerMethod 내부의 invoikeAndHandle 메서드에서는 invokeForRequest 메서드로 요청을 처리(핸들러 메서드로 요청을 위임)하고 그 반환 객체인 reternValue 값을 다시 returnValueHandler가 처리한다. 
+returnValueHandler는 응답 객체의 타입에 따라 HandlerMethodReturnValueHandler의 여러 구현체로 응답 객체를 처리하도록 한다.
+응답 객체의 타입으로 여러 가지가 있지만 대표적으로 String이 반환될 경우 viewResolver에 의해 viewName으로 처리되고, view 인 경우 view 인스턴스로 렌더링 되며 @ResponsBody 가 적용된 객체인 경우 HttpMessageConverter 구현체로 변환해서 응답하는 등이 있다.
+
+
+
+
